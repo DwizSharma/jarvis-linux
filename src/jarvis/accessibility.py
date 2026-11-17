@@ -41,8 +41,17 @@ class Desktop:
     def elements(self, query: str = "") -> list[Element]:
         desktop = self.atspi.Registry.getDesktop(0)
         found: list[Element] = []
+        visited = 0
+        # Browser and office accessibility trees can be enormous. Bound a
+        # scan so voice commands never freeze the listening loop indefinitely.
+        node_budget = 3000 if query else 400
+        result_limit = 2 if query else 120
 
         def visit(node: Any, path: str, depth: int = 0) -> None:
+            nonlocal visited
+            if visited >= node_budget or len(found) >= result_limit:
+                return
+            visited += 1
             if depth > 40:
                 return
             try:
@@ -51,6 +60,8 @@ class Desktop:
                 if name and (not query or query.casefold() in name.casefold()):
                     found.append(Element(name, role, path, node))
                 for index in range(node.childCount):
+                    if visited >= node_budget or len(found) >= result_limit:
+                        break
                     visit(node.getChildAtIndex(index), f"{path}/{index}", depth + 1)
             except Exception:
                 return

@@ -144,13 +144,17 @@ def _wake_phrases(settings: Settings) -> list[str]:
 
 
 def _exit_phrases() -> list[str]:
-    return ["jarvis soja bete", "soja bete", "so ja bete", "so jao jarvis", "jarvis exit", "exit jarvis"]
+    return [
+        "jarvis soja bete", "soja bete", "so ja bete", "so jao jarvis",
+        "jarvis top ja", "top ja", "jarvis exit", "exit jarvis",
+    ]
 
 
 def _command_phrases(settings: Settings) -> list[str]:
     phrases = [
         "list controls", "show controls", "show elements", "controls dikhao",
-        "jarvis soja bete", "soja bete", "so ja bete", "so jao jarvis", "exit jarvis",
+        "jarvis soja bete", "soja bete", "so ja bete", "so jao jarvis",
+        "jarvis top ja", "top ja", "exit jarvis",
         "screenshot", "take screenshot", "screenshot lo", "स्क्रीनशॉट लो",
         "scroll up", "scroll down", "upar scroll", "neeche scroll",
         "ऊपर स्क्रॉल", "नीचे स्क्रॉल", "ऊपर स्क्रॉल करो", "नीचे स्क्रॉल करो",
