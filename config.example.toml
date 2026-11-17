@@ -1,0 +1,9 @@
+[voice]
+# Choose: english, hindi, or hinglish.
+language = "english"
+variant = "male2"
+rate = -12
+pitch = -18
+
+# In Hindi mode, change this to "जार्विस जागो".
+wake_phrase = "wake up jarvis"
