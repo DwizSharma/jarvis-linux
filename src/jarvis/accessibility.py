@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import os
 import subprocess
 from dataclasses import dataclass
+from shutil import which
 from typing import Any
 
 
@@ -95,7 +95,6 @@ class Desktop:
                 raise RuntimeError(f"{element.name!r} cannot accept text through AT-SPI.") from exc
 
     def scroll(self, direction: str) -> str:
-        desktop = self.atspi.Registry.getDesktop(0)
         # AT-SPI exposes scrolling as component actions on many toolkits.
         choices = {"down": ("scroll down", "scroll_down"), "up": ("scroll up", "scroll_up")}
         names = choices[direction]
@@ -126,9 +125,14 @@ class Desktop:
         folder = Path.home() / "Pictures" / "Jarvis"
         folder.mkdir(parents=True, exist_ok=True)
         target = folder / f"screen-{datetime.now():%Y%m%d-%H%M%S}.png"
-        candidates = [["gnome-screenshot", "-f", str(target)], ["xfce4-screenshooter", "-f", "-s", str(target)], ["scrot", str(target)], ["grim", str(target)]]
+        candidates = [
+            ["gnome-screenshot", "-f", str(target)],
+            ["xfce4-screenshooter", "-f", "-s", str(target)],
+            ["scrot", str(target)],
+            ["grim", str(target)],
+        ]
         for command in candidates:
-            if not shutil_which(command[0]):
+            if not which(command[0]):
                 continue
             result = subprocess.run(command, capture_output=True, text=True, timeout=20)
             if result.returncode == 0 and target.exists():
@@ -146,11 +150,6 @@ class Desktop:
             choices = ", ".join(f"{item.name} ({item.role})" for item in matches[:5])
             raise RuntimeError(f"More than one element matched. Be more specific: {choices}")
         return matches[0]
-
-
-def shutil_which(command: str) -> str | None:
-    from shutil import which
-    return which(command)
 
 
 def open_app(query: str) -> str:
