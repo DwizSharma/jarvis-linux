@@ -43,8 +43,14 @@ def main() -> None:
     model = Model(str(model_path))
     wake_phrases = _wake_phrases(settings)
     exit_phrases = _exit_phrases()
-    wake_recognizer = KaldiRecognizer(model, 16000, json.dumps(wake_phrases + exit_phrases + ["[unk]"]))
-    command_recognizer = KaldiRecognizer(model, 16000, json.dumps(_command_phrases(settings) + ["[unk]"]))
+    command_phrases = _command_phrases(settings)
+    # Listen for both the standalone wake word and complete one-shot commands
+    # such as "Jarvis open Firefox". Vosk needs these forms in its grammar.
+    inline_phrases = [f"jarvis {command}" for command in command_phrases]
+    wake_recognizer = KaldiRecognizer(
+        model, 16000, json.dumps(wake_phrases + exit_phrases + inline_phrases + ["[unk]"])
+    )
+    command_recognizer = KaldiRecognizer(model, 16000, json.dumps(command_phrases + ["[unk]"]))
     recognizer = wake_recognizer
     audio: queue.Queue[bytes] = queue.Queue(maxsize=40)
 
@@ -106,6 +112,12 @@ def main() -> None:
                 command_deadline = time.monotonic() + 12
                 continue
             if mode == "wake":
+                inline_command = re.sub(r"^jarvis\b\s*", "", phrase, count=1, flags=re.I).strip()
+                if inline_command != phrase.strip() and inline_command:
+                    desktop = _execute(inline_command, desktop, settings)
+                    _flush(audio)
+                    recognizer.Reset()
+                    continue
                 if not any(_normalize(item) in normalized for item in wake_phrases):
                     continue
                 mode = "command"

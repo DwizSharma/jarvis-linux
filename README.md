@@ -84,7 +84,10 @@ Jarvis speaks **"Jarvis is ready"** when it's listening.
 
 ## 🗣️ Voice Commands
 
-Say the wake phrase first, wait for **"Yes?"**, then give a command.
+Give Jarvis a command either in one sentence or in two steps. For one sentence,
+start with **"Jarvis"** and follow it with the command, such as **"Jarvis open Firefox"**.
+You can also say the configured wake phrase, wait for **"Yes?"**, and then give
+the command.
 
 | Command | Example |
 |---|---|
