@@ -66,3 +66,7 @@ Open a GitHub Issue with:
 - Your distro and desktop environment
 - The command you spoke and what Jarvis said/did
 - Relevant lines from `~/.local/state/jarvis/jarvis.log`
+
+## Acknowledgements
+
+Thanks to all contributors who help improve Jarvis through code, testing, and feedback.
